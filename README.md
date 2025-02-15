@@ -6,7 +6,7 @@ A Figma plugin to help you organize your Figma experience, as a viewer or design
 
 <!-- - [x] #739 -->
 - [x] Section Generator
-- [ ] Section Header Generator :partying_face
+- [ ] Section Header Generator :partying_face:
 - [ ] Design Steps Generator :tada:
 - [ ] Thumbnail Generator 🚀
 - [ ] Auto TOC Generator :boom:
