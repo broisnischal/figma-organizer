@@ -29,9 +29,9 @@
       },
       "-",
       {
-        "name": "Sub Section",
-        "main": "src/sub/main.ts",
-        "ui": "src/sub/ui.tsx"
+        "name": "Header",
+        "main": "src/header/main.ts",
+        "ui": "src/header/ui.tsx"
       },
       "-",
       {
