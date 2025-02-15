@@ -14,7 +14,7 @@ export default async function () {
     headers = storedHeaders
   }
 
-  once<CreateRectanglesHandler>('CREATE_RECTANGLES', async function (formData) {
+  once<CreateRectanglesHandler>('CREATE_SECTION_HEADER', async function (formData) {
     const { title, description, status, link, headerBackground, isVerified } = formData
     const headerFrame = figma.createFrame()
 
@@ -197,7 +197,7 @@ once<{ name: 'GENERATE_TOC'; handler: () => void }>(
 
 async function createOrUpdateTOC() {
   // Find or create TOC page
-  let tocPage = figma.root.children.find(page => page.name === "Table of Contents ( Auto-generated )")
+  let tocPage = figma.root.children.find(page => page.name === "Table of Contents")
   if (!tocPage) {
     tocPage = figma.createPage()
     tocPage.name = "Table of Contents"

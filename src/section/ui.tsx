@@ -16,7 +16,7 @@ import { emit } from '@create-figma-plugin/utilities'
 import { h } from 'preact'
 import { useCallback, useState } from 'preact/hooks'
 
-import ColorBox from './components/textbox-color'
+import ColorBox from '../components/textbox-color'
 import { CloseHandler, CreateRectanglesHandler, PluginFormData } from './types'
 
 
@@ -54,7 +54,7 @@ function Plugin() {
 
   const handleCreateRectanglesButtonClick = useCallback(
     function () {
-      emit<CreateRectanglesHandler>('CREATE_RECTANGLES', formData)
+      emit<CreateRectanglesHandler>('CREATE_SECTION_HEADER', formData)
     },
     [formData]
   )

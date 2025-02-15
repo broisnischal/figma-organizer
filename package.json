@@ -15,12 +15,41 @@
     "watch": "build-figma-plugin --typecheck --watch"
   },
   "figma-plugin": {
+    "api": "1.0.0",
     "editorType": [
       "figma"
     ],
-    "id": "header",
-    "name": "Header",
-    "main": "src/main.ts",
-    "ui": "src/ui.tsx"
+    "id": "figma-organizer",
+    "name": "Figma Organizer",
+    "menu": [
+      {
+        "name": "Section Generator",
+        "main": "src/section/main.ts",
+        "ui": "src/section/ui.tsx"
+      },
+      "-",
+      {
+        "name": "Sub Section",
+        "main": "src/sub/main.ts",
+        "ui": "src/sub/ui.tsx"
+      },
+      "-",
+      {
+        "name": "Steps",
+        "main": "src/steps/main.ts",
+        "ui": "src/steps/ui.tsx"
+      }
+    ],
+    "permissions": [
+      "activeusers",
+      "currentuser"
+    ],
+    "relaunchButtons": {
+      "section": {
+        "name": "Section Generator",
+        "main": "src/section/main.ts",
+        "ui": "src/section/ui.tsx"
+      }
+    }
   }
 }

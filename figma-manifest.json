@@ -1,0 +1,96 @@
+{
+    "$id": "https://example.com/person.schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Figma Plugin Manifest",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The name of the plugin, as it will appear in the menu."
+        },
+        "id": {
+            "type": "string",
+            "description": "The plugin ID to publish updates to. This ID will be assigned to you by Figma and is typically obtained using the \"Create new Plugin\" feature, which will generate a manifest file with a new id. You can also get a new plugin ID at the time of publishing your plugin. This property is required to use some features of our API such as `setPluginData`."
+        },
+        "api": {
+            "description": "The version of the Figma API used by the plugin. **We recommend updating to the latest version whenever possible** to get the latest features, bug fixes, and documentation. However, we don't auto-upgrade the api version of plugins give you the chance to test your plugin against the new version.",
+            "type": "string"
+        },
+        "main": {
+            "type": "string",
+            "description": "The relative file path to the Javascript code of your plugin."
+        },
+        "ui": {
+            "type": "string",
+            "description": "The relative file path to the HTML file used in the iframe modal, if you choose to have one. The contents of this file will be available as a string in the Javascript code via the constant `__html__` which you can then use to call `figma.showUI`."
+        },
+        "menu": {
+            "$ref": "#/definitions/ManifestMenuItem"
+        },
+        "build": {
+            "type": "string",
+            "description": "**Experimental!** A shell command to run before we load the file specified in main and ui. This can be used to call build commands such as compiling with Typescript, running Webpack, etc. The command is run in the directory of the manifest."
+        }
+    },
+    "required": [
+        "name"
+    ],
+    "definitions": {
+        "ManifestMenuItem": {
+            "type": "array",
+            "default": [],
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "description": "This creates a user-clickable submenu item.",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The `name` property is displayed to the user in the menu."
+                            },
+                            "command": {
+                                "type": "string",
+                                "description": "The command property is never exposed to the user but is rather exposed to your plugin through the `figma.command` javascript property. You can choose any string value for command."
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "command"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "description": "This creates a separator in the menu. A separator is not selectable by the user.",
+                        "properties": {
+                            "separator": {
+                                "const": true,
+                                "default": true
+                            }
+                        },
+                        "required": [
+                            "separator"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "description": "This creates a nested submenu.",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The `name` property is displayed to the user in the menu."
+                            },
+                            "menu": {
+                                "$ref": "#/definitions/ManifestMenuItem"
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "menu"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
