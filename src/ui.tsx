@@ -8,7 +8,6 @@ import {
   render,
   Text,
   Textbox,
-  TextboxColor,
   TextboxMultiline,
   Toggle,
   VerticalSpace
@@ -17,6 +16,7 @@ import { emit } from '@create-figma-plugin/utilities'
 import { h } from 'preact'
 import { useCallback, useState } from 'preact/hooks'
 
+import ColorBox from './components/textbox-color'
 import { CloseHandler, CreateRectanglesHandler, PluginFormData } from './types'
 
 
@@ -106,12 +106,25 @@ function Plugin() {
       <VerticalSpace space="small" />
 
 
-      {formData.headerBackground && <TextboxColor
+      {/* {formData.headerBackground && <TextboxColor
         variant='border'
         hexColor={formData.headerBackground}
         opacity='1'
-        onChange={e => handleInputChange('headerBackground', '')}
-      />}
+
+        onChange={e => {
+          console.log(e)
+
+          // handleInputChange('headerBackground', e as any as string)
+        }}
+      />} */}
+
+      <ColorBox
+        hexColor={formData.headerBackground!}
+        onHexColorInput={e => handleInputChange('headerBackground', e.currentTarget.value)}
+        onOpacityInput={e => handleInputChange('headerBackground', e.currentTarget.value)}
+        opacity='1'
+        variant='border'
+      />
 
       <VerticalSpace space="extraLarge" />
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

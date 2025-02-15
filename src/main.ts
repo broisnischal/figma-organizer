@@ -7,7 +7,13 @@ import {
 
 let headers: HeaderData[] = []
 
-export default function () {
+export default async function () {
+
+  const storedHeaders = await figma.clientStorage.getAsync('headers')
+  if (storedHeaders) {
+    headers = storedHeaders
+  }
+
   once<CreateRectanglesHandler>('CREATE_RECTANGLES', async function (formData) {
     const { title, description, status, link, headerBackground, isVerified } = formData
     const headerFrame = figma.createFrame()
@@ -16,7 +22,12 @@ export default function () {
     const id = `SEC-${Math.random().toString(36).substr(2, 9)}`
 
     // Set up frame properties
-    headerFrame.name = `Section Header - ${id}`
+
+    const viewportBounds = figma.viewport.bounds
+    headerFrame.x = viewportBounds.x + (viewportBounds.width - headerFrame.width) / 2
+    headerFrame.y = viewportBounds.y + (viewportBounds.height - headerFrame.height) / 2
+
+    headerFrame.name = `${title} - ${id}`
     headerFrame.resize(1200, 200)
     headerFrame.layoutMode = 'VERTICAL'
     headerFrame.itemSpacing = 16
@@ -26,17 +37,17 @@ export default function () {
     headerFrame.paddingBottom = 40
 
     // Create background rectangle
-    const background = figma.createRectangle()
-    background.resize(headerFrame.width, headerFrame.height)
-    background.fills = [{ type: 'SOLID', color: { r: 0.95, g: 0.95, b: 0.95 } }]
-    headerFrame.appendChild(background)
+    // const background = figma.createRectangle()
+    // background.resize(headerFrame.width, headerFrame.height)
+    // background.fills = [{ type: 'SOLID', color: { r: 0.95, g: 0.95, b: 0.95 } }]
+    // headerFrame.appendChild(background)
 
     // Create title text
     const titleText = figma.createText()
     await figma.loadFontAsync(titleText.fontName as FontName)
     titleText.characters = title
     titleText.fontSize = 32
-    titleText.fontName = { family: 'Inter', style: 'Bold' } // Set font weight via fontName
+    // titleText.fontName = { family: 'Inter', style: 'Bold' } // Set font weight via fontName
 
     // Create description text
     const descText = figma.createText()
@@ -83,8 +94,27 @@ export default function () {
       status
     })
 
+    await figma.clientStorage.setAsync('headers', headers)
+
+
+    if (headerBackground) {
+      headerFrame.fills = [{ type: 'SOLID', color: hexToRgb(headerBackground) }]
+    }
+
+    if (isVerified) {
+      const verifiedBadge = figma.createFrame()
+      verifiedBadge.resize(32, 32)
+      verifiedBadge.cornerRadius = 4
+      verifiedBadge.fills = [{ type: 'SOLID', color: { r: 0.95, g: 0.95, b: 0.95 } }]
+      headerFrame.appendChild(verifiedBadge)
+    }
+
+    figma.currentPage.appendChild(headerFrame)
+
     figma.currentPage.selection = [headerFrame]
     figma.viewport.scrollAndZoomIntoView([headerFrame])
+
+    await createOrUpdateTOC()
   })
 
   once<CloseHandler>('CLOSE', function () {
@@ -160,6 +190,45 @@ once<{ name: 'GENERATE_TOC'; handler: () => void }>(
     }
 
     tocPage.appendChild(tocFrame)
-    figma.currentPage = tocPage
+    // figma.currentPage = tocPage
   }
 )
+
+
+async function createOrUpdateTOC() {
+  // Find or create TOC page
+  let tocPage = figma.root.children.find(page => page.name === "Table of Contents ( Auto-generated )")
+  if (!tocPage) {
+    tocPage = figma.createPage()
+    tocPage.name = "Table of Contents"
+  }
+
+  // Find or create TOC frame
+  let tocFrame = tocPage.children.find(node => node.name === "TOC") as FrameNode
+  if (!tocFrame) {
+    tocFrame = figma.createFrame()
+    tocFrame.name = "TOC"
+    tocFrame.resize(1200, 800)
+    tocPage.appendChild(tocFrame)
+  } else {
+    // Clear existing TOC entries 
+    tocFrame.children.forEach(child => child.remove())
+  }
+
+  // Create new TOC entries
+  let yPosition = 40
+  for (const header of headers) {
+    const entry = figma.createText()
+    await figma.loadFontAsync(entry.fontName as FontName)
+    entry.characters = `${header.title} [${header.status}]`
+    entry.fontSize = 24
+    entry.x = 40
+    entry.y = yPosition
+    entry.hyperlink = { type: 'NODE', value: header.nodeId }
+    tocFrame.appendChild(entry)
+    yPosition += 60
+  }
+
+  // Switch to TOC page after update
+  // figma.currentPage = tocPage
+}
