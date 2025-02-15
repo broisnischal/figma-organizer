@@ -10,6 +10,7 @@ A Figma plugin to help you organize your Figma experience, as a viewer or design
 - [ ] Design Steps Generator :tada:
 - [ ] Thumbnail Generator 🚀
 - [ ] Auto TOC Generator :boom:
+- [ ] Sticky notes + comments
 
 ### Planning
 - [ ] Styling & Multiple Variant
