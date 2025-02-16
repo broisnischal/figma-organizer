@@ -17,7 +17,7 @@ import { h } from 'preact'
 import { useCallback, useState } from 'preact/hooks'
 
 import ColorBox from '../components/textbox-color'
-import { CloseHandler, CreateRectanglesHandler, PluginFormData } from './types'
+import { CloseHandler, CreateRectanglesHandler, PluginFormData } from '../types'
 
 
 function Plugin() {
