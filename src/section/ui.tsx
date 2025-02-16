@@ -2,61 +2,57 @@ import {
   Button,
   Columns,
   Container,
-  Dropdown,
   Muted,
-  RadioButtonsOption,
   render,
   Text,
-  Textbox,
-  TextboxMultiline,
-  Toggle,
   VerticalSpace
 } from '@create-figma-plugin/ui'
 import { emit } from '@create-figma-plugin/utilities'
 import { h } from 'preact'
-import { useCallback, useState } from 'preact/hooks'
+import { useCallback } from 'preact/hooks'
 
-import ColorBox from '../components/textbox-color'
-import { CloseHandler, CreateRectanglesHandler, PluginFormData } from '../types'
+import { CloseHandler, CreateSectionHandler, } from '../types'
 
 
 function Plugin() {
-  const [formData, setFormData] = useState<PluginFormData>({
-    title: '',
-    description: '',
-    headerBackground: '#333333',
-    isVerified: false,
-    status: 'idea',
-    link: ''
-  });
+  // const [formData, setFormData] = useState<PluginFormData>({
+  //   title: '',
+  //   description: '',
+  //   headerBackground: '#333333',
+  //   isVerified: false,
+  //   status: 'idea',
+  //   link: ''
+  // });
 
-  const options: Array<RadioButtonsOption> = [
-    {
-      children: <Text>Idea</Text>,
-      value: 'idea'
-    }, {
-      children: <Text>InProgress</Text>,
-      value: 'inprogess'
-    }, {
-      children: <Text>Shipped</Text>,
-      value: 'shipped'
-    }, {
-      children: <Text>Disclosed</Text>,
-      value: 'disclosed'
-    }];
+  // const options: Array<RadioButtonsOption> = [
+  //   {
+  //     children: <Text>Idea</Text>,
+  //     value: 'idea'
+  //   }, {
+  //     children: <Text>InProgress</Text>,
+  //     value: 'inprogess'
+  //   }, {
+  //     children: <Text>Shipped</Text>,
+  //     value: 'shipped'
+  //   }, {
+  //     children: <Text>Disclosed</Text>,
+  //     value: 'disclosed'
+  //   }];
 
-  const handleInputChange = useCallback((field: keyof PluginFormData, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  }, []);
+  // const handleInputChange = useCallback((field: keyof PluginFormData, value: string | boolean) => {
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     [field]: value
+  //   }));
+  // }, []);
 
   const handleCreateRectanglesButtonClick = useCallback(
     function () {
-      emit<CreateRectanglesHandler>('CREATE_SECTION_HEADER', formData)
+      emit<CreateSectionHandler>('CREATE_SECTION', {
+        title: "testing"
+      })
     },
-    [formData]
+    [] // formData
   )
   const handleCloseButtonClick = useCallback(function () {
     emit<CloseHandler>('CLOSE')
@@ -69,13 +65,13 @@ function Plugin() {
         <Muted>Title</Muted>
       </Text>
       <VerticalSpace space="small" />
-      <Textbox
+      {/* <Textbox
         value={formData.title}
         onChange={e => handleInputChange('title', e.currentTarget.value)}
         style={{
           border: '1px solid #333'
         }}
-      />
+      /> */}
       {/* <TextboxNumeric
         onNumericValueInput={setCount}
         onValueInput={setCountString}
@@ -89,13 +85,13 @@ function Plugin() {
 
       <VerticalSpace space="small" />
 
-      <TextboxMultiline
+      {/* <TextboxMultiline
         style={{
           border: '1px solid #333'
         }}
         value={formData.description}
         onChange={e => handleInputChange('description', e.currentTarget.value)}
-      />
+      /> */}
 
       <VerticalSpace space="extraLarge" />
 
@@ -118,17 +114,17 @@ function Plugin() {
         }}
       />} */}
 
-      <ColorBox
+      {/* <ColorBox
         hexColor={formData.headerBackground!}
         onHexColorInput={e => handleInputChange('headerBackground', e.currentTarget.value)}
         onOpacityInput={e => handleInputChange('headerBackground', e.currentTarget.value)}
         opacity='1'
         variant='border'
-      />
+      /> */}
 
       <VerticalSpace space="extraLarge" />
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Toggle
+        {/* <Toggle
           value={formData.isVerified}
           onValueChange={value => handleInputChange('isVerified', value)}
           children={
@@ -136,14 +132,14 @@ function Plugin() {
               <Muted>is verified</Muted>
             </Text>
           }
-        />
+        /> */}
 
-        <Dropdown
+        {/* <Dropdown
           options={options}
           style={{ width: '60%' }}
           value={formData.status}
           onChange={e => handleInputChange('status', e.currentTarget.value)}
-        />
+        /> */}
       </div>
 
       {/* <RadioButtons about={'Test'} onChange={handleChange} options={options} value={value} /> */}
@@ -157,13 +153,13 @@ function Plugin() {
 
       <VerticalSpace space="small" />
 
-      <Textbox
+      {/* <Textbox
         style={{
-          border: '1px solid #333'
+          border: '1px solid #333' 
         }}
         value={formData.link}
         onChange={e => handleInputChange('link', e.currentTarget.value)}
-      />
+      /> */}
 
       <VerticalSpace space="extraLarge" />
 

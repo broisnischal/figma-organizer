@@ -1,4 +1,5 @@
 import { once, showUI } from '@create-figma-plugin/utilities';
+import { TableOfContents } from '../toc/main';
 import {
   CloseHandler,
   CreateHeaderHandler,
@@ -11,8 +12,6 @@ import {
 let designNode: DesignNode[] = []
 let currentParentId: string | null = null;
 
-
-
 export default async function () {
 
   const storedHeaders = await figma.clientStorage.getAsync('designNode')
@@ -21,18 +20,18 @@ export default async function () {
   }
 
   once<CreateSectionHandler>('CREATE_SECTION', async function (formData) {
-    const section = createSection('');
-    const figmaSection = figma.createSection()
+    const section = createSection(formData.title ?? 'superb awesome section'
+    );
 
-    // Generate unique ID
-    const id = `SEC-${Math.random().toString(36).substr(2, 9)}`
+    console.log(section);
 
     const user = figma.currentUser as User;
+
+    console.log(user);
 
     designNode.push(section);
 
     await updateStorage();
-
 
     // figma.currentPage.appendChild(figmaSection)
     // figma.currentPage.selection = [figmaSection]
@@ -79,13 +78,12 @@ export default async function () {
 
 
 
-
-
 // Section Creator
 function createSection(title: string): DesignNode {
   const section = figma.createSection();
   section.name = `SECTION: ${title}`;
-  section.resizeWithoutConstraints(1200, 200);
+  section.resizeWithoutConstraints(3000, 3000);
+  section.fills = [{ type: 'SOLID', color: { r: 0.9, g: 0.9, b: 0.9 } }];
 
   const node: DesignNode = {
     id: `SEC-${Date.now()}`,
@@ -144,42 +142,19 @@ function createStep(title: string, parentId: string): DesignNode {
   return node;
 }
 
-// TOC Generator
-async function createOrUpdateTOC() {
-  const tocPage = figma.root.children.find(p => p.name === 'Table of Contents') || figma.createPage();
-  tocPage.name = 'Table of Contents';
-
-  const tocFrame = tocPage.children.find(f => f.name === 'TOC') as FrameNode || figma.createFrame();
-  tocFrame.name = 'TOC';
-  tocFrame.resize(1200, 800);
-  tocFrame.layoutMode = 'VERTICAL';
-
-  // Clear existing content
-  tocFrame.children.forEach(child => child.remove());
-
-  // Recursive TOC creation
-  const createTOCEntry = (node: DesignNode, depth: number) => {
-    const entry = figma.createText();
-    entry.characters = `${'  '.repeat(depth)}${node.title}${node.status ? ` [${node.status}]` : ''}`;
-    entry.fontSize = 24 - (depth * 4);
-    entry.x = 40 + (depth * 40);
-    entry.hyperlink = { type: 'NODE', value: node.nodeId };
-    return entry;
-  };
-
-  const traverseTree = (nodes: DesignNode[], depth = 0) => {
-    nodes.forEach(node => {
-      tocFrame.appendChild(createTOCEntry(node, depth));
-      if (node.children.length) traverseTree(node.children, depth + 1);
-    });
-  };
-
-  traverseTree(designNode);
-  figma.currentPage = tocPage;
-}
-
-// Helper function to update storage and TOC
 async function updateStorage() {
   await figma.clientStorage.setAsync('designNode', designNode);
-  await createOrUpdateTOC();
+  await createOrUpdateTOC(designNode);
+}
+
+async function createOrUpdateTOC(designNode: DesignNode[]) {
+  const toc = new TableOfContents();
+  toc.clear();
+  await toc.generate(designNode); // Add await here
+  toc.show();
+
+  // Force redraw
+  const tempRect = figma.createRectangle();
+  toc.tocFrame.appendChild(tempRect);
+  tempRect.remove();
 }
